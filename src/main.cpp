@@ -32,6 +32,8 @@ competition Competition;
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
+  robotConfig();
+  screen();
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -85,18 +87,30 @@ void DrivetrainMov() {
 void usercontrol(void) {
   // User control code here, inside the loop
   while (true) {
-    // This is the main execution loop for the user control program.
-    // Each time through the loop your program should update motor + servo
-    // values based on feedback from the joysticks.
+    // Drive control
+    double forwardSpeed = Controller1.Axis3.position(percent);
+    double turnSpeed = Controller1.Axis1.position(percent);
+    drive(forwardSpeed + turnSpeed);
+    drive(forwardSpeed - turnSpeed);
 
-    // ........................................................................
-    // Insert user code here. This is where you use the joystick values to
-    // update your motors, etc.
-    // ........................................................................
+    // Intake control
+    if (Controller.ButtonR1.pressing()) {
+        intake(100); // Run intake motors at full speed
+    } else if (Controller.ButtonR2.pressing()) {
+        intake(-100); // Reverse intake motors
+    } else {
+        intake(0); // Stop intake motors
+    }
 
-    wait(20, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
+    // Piston control
+    if (Controller.ButtonA.pressing()) {
+      groupPistons(piston1, piston2, true); // Extend pistons
+    } else {
+      groupPistons(piston1, piston2, false); // Retract pistons
+    }
   }
+
+  wait(20, msec); // Small delay to prevent CPU overload
 }
 
 //
