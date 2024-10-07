@@ -109,8 +109,6 @@ void usercontrol(void) {
       groupPistons(piston1, piston2, false); // Retract pistons
     }
   }
-
-  wait(20, msec); // Small delay to prevent CPU overload
 }
 
 //
