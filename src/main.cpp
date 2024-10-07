@@ -29,11 +29,21 @@ competition Competition;
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
+void initialize(){
+  if (pros::c::registry_get_plugged_type(15) == pros::c::E_DEVICE_IMU){
+      chassis.calibrate();
+  }
+  chassis.setPose(0,0,0);
+
+  screen.selector.selector();
+}
+
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   robotConfig();
   screen();
+  initialize();
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -53,7 +63,21 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
+
+  subsystem.autonomous.AutoDrive(subsystem.intake, subsystem.latch);
+
 }
+struct RobotSubsystems {
+  Robot::Autonomous autonomous;
+  Robot::Drivetrain drivetrain;
+  Robot::Intake intake;
+  Robot::Latch latch;
+} subsystem;
+
+struct RobotScreen {
+  Robot::selector_screen selector;
+  Robot::status_screen status;
+} screen;
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -88,10 +112,26 @@ void usercontrol(void) {
   // User control code here, inside the loop
   while (true) {
     // Drive control
-    double forwardSpeed = Controller1.Axis3.position(percent);
-    double turnSpeed = Controller1.Axis1.position(percent);
-    drive(forwardSpeed + turnSpeed);
-    drive(forwardSpeed - turnSpeed);
+    void DrivetrainMov() {
+    if (Controller1.Axis3.position(pct) != 0) {
+      LeftA.spin(forward, Controller1.Axis3.position(pct), pct);
+      LeftB.spin(forward, Controller1.Axis3.position(pct), pct);
+    } else {
+      LeftA.stop();
+      LeftB.stop();
+    }
+    if (Controller1.Axis2.position(pct) != 0) {
+      RightA.spin(reverse, Controller1.Axis2.position(pct), pct);
+      RightB.spin(reverse, Controller1.Axis2.position(pct), pct);
+    } else {
+      RightA.stop();
+      RightB.stop();
+    }
+      double forwardSpeed = Controller1.Axis3.position(percent);
+      double turnSpeed = Controller1.Axis1.position(percent);
+      drive(forwardSpeed + turnSpeed);
+      drive(forwardSpeed - turnSpeed);
+    }
 
     // Intake control
     if (Controller.ButtonR1.pressing()) {
