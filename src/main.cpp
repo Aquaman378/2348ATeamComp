@@ -13,6 +13,7 @@
 #include "vex.h"
 
 using namespace vex;
+using namespace Globals;
 
 // A global instance of competition
 competition Competition;
