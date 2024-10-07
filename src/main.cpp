@@ -90,6 +90,7 @@ struct RobotScreen {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+/*
 void DrivetrainMov() {
     if (Controller1.Axis3.position(pct) != 0) {
       LeftA.spin(forward, Controller1.Axis3.position(pct), pct);
@@ -106,7 +107,7 @@ void DrivetrainMov() {
       RightB.stop();
     }
 }
-
+*/
 
 
 void usercontrol(void) {
